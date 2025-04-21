@@ -12,7 +12,7 @@ public class FileManager {
      * Если файл существует, он будет перезаписан.
      *
      * @param filePath Путь к файлу.
-     * @param data Строка данных для записи.
+     * @param data     Строка данных для записи.
      * @throws FileOperationException Если возникает ошибка при записи файла (например, нет прав доступа, диск полон).
      */
     public void writeToFile(String filePath, String data) throws FileOperationException {
@@ -22,7 +22,8 @@ public class FileManager {
             writer.newLine(); // Добавим новую строку для наглядности, если нужно писать несколько раз
         } catch (IOException e) {
             // Оборачиваем стандартное IOException в наше пользовательское исключение
-            throw new FileOperationException("Ошибка при записи в файл '" + filePath + "'", e);
+            String errorMessage = String.format("Ошибка при записи в файл '%s'. Причина: %s", filePath, e.getMessage());
+            throw new FileOperationException(errorMessage, e);
         }
     }
 
@@ -43,7 +44,8 @@ public class FileManager {
             }
         } catch (IOException e) {
             // Оборачиваем стандартное IOException в наше пользовательское исключение
-            throw new FileOperationException("Ошибка при чтении из файла '" + filePath + "'", e);
+            String errorMessage = String.format("Ошибка при чтении из файла '%s'. Причина: %s", filePath, e.getMessage());
+            throw new FileOperationException(errorMessage, e);
         }
 
         // Удаляем последний разделитель строк, если он был добавлен

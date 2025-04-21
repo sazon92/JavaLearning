@@ -12,10 +12,10 @@ public class Main {
             System.out.println("Данные успешно записаны.");
         } catch (FileOperationException e) {
             System.err.println("Произошла ошибка при записи:");
-            System.err.println("Сообщение: " + e.getMessage());
+            System.err.printf("Сообщение: %s%n", e.getMessage());
             // Можно также вывести исходную причину ошибки, если она есть
             if (e.getCause() != null) {
-                System.err.println("Причина: " + e.getCause().getMessage());
+                System.err.printf("Причина: %s", e.getCause().getMessage());
             }
         }
 
@@ -32,9 +32,9 @@ public class Main {
 
         } catch (FileOperationException e) {
             System.err.println("Произошла ошибка при чтении:");
-            System.err.println("Сообщение: " + e.getMessage());
+            System.err.printf("Сообщение: %s", e.getMessage());
             if (e.getCause() != null) {
-                System.err.println("Причина: " + e.getCause().getMessage());
+                System.err.printf("Причина: %s", e.getCause().getMessage());
             }
         }
 
@@ -47,10 +47,10 @@ public class Main {
             System.out.println("Прочитанные данные (не должно отобразиться): " + dataRead);
         } catch (FileOperationException e) {
             System.err.println("Ожидаемая ошибка при чтении несуществующего файла:");
-            System.err.println("Сообщение: " + e.getMessage());
+            System.err.printf("Сообщение: %s", e.getMessage());
             // Показываем тип и сообщение исходной ошибки
             if (e.getCause() != null) {
-                System.err.println("Причина: " + e.getCause().getClass().getName() + ": " + e.getCause().getMessage());
+                System.err.printf("Причина: %s: %s", e.getCause().getClass().getName(), e.getCause().getMessage());
             }
         }
     }
