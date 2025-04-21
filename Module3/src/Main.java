@@ -13,10 +13,6 @@ public class Main {
         } catch (FileOperationException e) {
             System.err.println("Произошла ошибка при записи:");
             System.err.printf("Сообщение: %s%n", e.getMessage());
-            // Можно также вывести исходную причину ошибки, если она есть
-            if (e.getCause() != null) {
-                System.err.printf("Причина: %s", e.getCause().getMessage());
-            }
         }
 
         System.out.println("\n-----------------------------\n");
@@ -33,9 +29,6 @@ public class Main {
         } catch (FileOperationException e) {
             System.err.println("Произошла ошибка при чтении:");
             System.err.printf("Сообщение: %s", e.getMessage());
-            if (e.getCause() != null) {
-                System.err.printf("Причина: %s", e.getCause().getMessage());
-            }
         }
 
         // --- Попытка чтения несуществующего файла для демонстрации ошибки ---
@@ -48,10 +41,6 @@ public class Main {
         } catch (FileOperationException e) {
             System.err.println("Ожидаемая ошибка при чтении несуществующего файла:");
             System.err.printf("Сообщение: %s", e.getMessage());
-            // Показываем тип и сообщение исходной ошибки
-            if (e.getCause() != null) {
-                System.err.printf("Причина: %s: %s", e.getCause().getClass().getName(), e.getCause().getMessage());
-            }
         }
     }
 }
