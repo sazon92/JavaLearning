@@ -3,16 +3,14 @@
  */
 public static void main(String[] args) {
     MyHashMap<String, Integer> map = new MyHashMap<>();
+    for (int i = 1; i <= 30; i++) {
+        map.put("ключ" + i, i);
+    }
 
-    map.put("один", 1);
-    map.put("два", 2);
-    map.put("три", 3);
+    System.out.println("Значение по ключу 'ключ10': " + map.get("ключ10"));
+    map.remove("ключ10");
+    System.out.println("После удаления: " + map.get("ключ10")); // должно быть null
 
-    System.out.println("Получить 'два': " + map.get("два")); // 2
-
-    map.put("два", 22);
-    System.out.println("Обновлённое значение 'два': " + map.get("два")); // 22
-
-    System.out.println("Удаление 'один': " + map.remove("один")); // 1
-    System.out.println("Попытка получить удалённый 'один': " + map.get("один")); // null
+    map.put("ключ10", 999);
+    System.out.println("После повторного добавления: " + map.get("ключ10"));
 }

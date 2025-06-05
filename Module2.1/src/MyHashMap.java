@@ -22,12 +22,17 @@ public class MyHashMap<K, V> {
         }
     }
 
-    private final Entry<K, V>[] buckets;
-    private final int DEFAULT_CAPACITY = 16;
+    private static final int DEFAULT_CAPACITY = 16;
+    private static final float DEFAULT_LOAD_FACTOR = 0.75f;
+
+    private Entry<K, V>[] buckets;
+    private int size = 0;
+    private final float loadFactor;
 
     @SuppressWarnings("unchecked")
     public MyHashMap() {
         buckets = new Entry[DEFAULT_CAPACITY];
+        this.loadFactor = DEFAULT_LOAD_FACTOR;
     }
 
     /**
@@ -44,12 +49,16 @@ public class MyHashMap<K, V> {
      * @param value Значение
      */
     public void put(K key, V value) {
+        if (size >= buckets.length * loadFactor) {
+            resize();
+        }
+
         int index = getBucketIndex(key);
         Entry<K, V> current = buckets[index];
 
         while (current != null) {
-            if (Objects.equals(current.key, key)) {
-                current.value = value; // Обновление значения
+            if (current.key.equals(key)) {
+                current.value = value;
                 return;
             }
             current = current.next;
@@ -58,6 +67,7 @@ public class MyHashMap<K, V> {
         Entry<K, V> newEntry = new Entry<>(key, value);
         newEntry.next = buckets[index];
         buckets[index] = newEntry;
+        size++;
     }
 
     /**
@@ -92,18 +102,39 @@ public class MyHashMap<K, V> {
         Entry<K, V> prev = null;
 
         while (current != null) {
-            if (Objects.equals(current.key, key)) {
+            if (current.key.equals(key)) {
                 if (prev == null) {
                     buckets[index] = current.next;
                 } else {
                     prev.next = current.next;
                 }
+                size--;
                 return current.value;
             }
+
             prev = current;
             current = current.next;
         }
 
         return null;
     }
+
+    /**
+     * Перехэширует все элементы в массив нового размера.
+     */
+    @SuppressWarnings("unchecked")
+    private void resize() {
+        Entry<K, V>[] oldBuckets = buckets;
+        buckets = new Entry[oldBuckets.length * 2];
+        size = 0;
+
+        for (Entry<K, V> bucket : oldBuckets) {
+            while (bucket != null) {
+                put(bucket.key, bucket.value);
+                bucket = bucket.next;
+            }
+        }
+    }
+
+
 }
