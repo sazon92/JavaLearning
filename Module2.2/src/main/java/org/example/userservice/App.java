@@ -1,15 +1,17 @@
 package org.example.userservice;
 
-import org.example.userservice.dao.UserDao;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.example.userservice.dao.UserDaoImpl;
 import org.example.userservice.entity.User;
+import org.example.userservice.service.UserService;
 
 import java.util.Scanner;
 
 public class App {
-    private static final UserDao userDao = new UserDaoImpl();
+    private static final UserService userService = new UserService(new UserDaoImpl());
 
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("\n=== User service ===");
@@ -32,17 +34,13 @@ public class App {
                     System.out.print("Возраст: ");
                     int age = Integer.parseInt(scanner.nextLine());
 
-                    User user = new User();
-                    user.setName(name);
-                    user.setEmail(email);
-                    user.setAge(age);
-                    userDao.create(user);
-                    System.out.println("Пользователь успешно создан!");
+                    User user = userService.createUser(name, email, age);
+                    System.out.println("Пользователь успешно создан! ID: " + user.getId());
                 }
                 case 2 -> {
                     System.out.print("ID пользователя: ");
                     Long id = Long.parseLong(scanner.nextLine());
-                    User user = userDao.read(id);
+                    User user = userService.getUser(id);
                     System.out.println(user != null ?
                             String.format("Пользователь [ID=%d, Имя='%s', Email='%s', Возраст=%d]",
                                     user.getId(), user.getName(), user.getEmail(), user.getAge())
@@ -51,7 +49,7 @@ public class App {
                 case 3 -> {
                     System.out.print("ID пользователя: ");
                     Long id = Long.parseLong(scanner.nextLine());
-                    User user = userDao.read(id);
+                    User user = userService.getUser(id);
                     if (user != null) {
                         System.out.print("Имя: ");
                         user.setName(scanner.nextLine());
@@ -59,7 +57,7 @@ public class App {
                         user.setEmail(scanner.nextLine());
                         System.out.print("Возраст: ");
                         user.setAge(Integer.parseInt(scanner.nextLine()));
-                        userDao.update(user);
+                        userService.updateUser(user);
                         System.out.println("Данные пользователя обновлены!");
                     } else {
                         System.out.println("Пользователь не найден.");
@@ -68,12 +66,12 @@ public class App {
                 case 4 -> {
                     System.out.print("ID пользователя: ");
                     Long id = Long.parseLong(scanner.nextLine());
-                    userDao.delete(id);
+                    userService.deleteUser(id);
                     System.out.println("Пользователь удален!");
                 }
                 case 5 -> {
                     System.out.println("\nСписок пользователей:");
-                    userDao.findAll().forEach(u ->
+                    userService.getAllUsers().forEach(u ->
                             System.out.printf("Пользователь [ID=%d, Имя='%s', Email='%s', Возраст=%d]%n",
                                     u.getId(), u.getName(), u.getEmail(), u.getAge())
                     );
