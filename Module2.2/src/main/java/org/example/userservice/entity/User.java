@@ -8,18 +8,48 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
+/**
+ * Класс, представляющий сущность пользователя в системе.
+ * Соответствует таблице "users" в базе данных.
+ */
 @Entity
 @Table(name = "users")
 public class User {
+    /**
+     * Уникальный идентификатор пользователя.
+     * Генерируется автоматически при сохранении в базу данных.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
+    /**
+     * Имя пользователя.
+     * Не может быть null.
+     */
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
+
+    /**
+     * Электронная почта пользователя.
+     * Должна быть уникальной в системе.
+     */
+    @Column(name = "email", nullable = false, unique = true, length = 255)
     private String email;
+
+    /**
+     * Возраст пользователя.
+     * Должен быть положительным числом.
+     */
+    @Column(name = "age", nullable = false)
     private int age;
 
-    @Column(name = "created_at")
+    /**
+     * Дата и время создания записи о пользователе.
+     * Устанавливается автоматически при создании объекта.
+     */
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public String getName() {
