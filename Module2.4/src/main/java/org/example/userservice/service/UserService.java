@@ -1,77 +1,60 @@
 package org.example.userservice.service;
 
-import org.example.userservice.dao.UserDao;
+import org.example.userservice.dto.UserDto;
 import org.example.userservice.entity.User;
+import org.example.userservice.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Сервис для управления пользователями.
- * Делегирует операции сохранения данных в {@link UserDao}.
- */
+@Service
 public class UserService {
-    private final UserDao userDao;
+    private final UserRepository repository;
 
-    /**
-     * Конструктор для создания экземпляра UserService.
-     *
-     * @param userDao DAO для работы с данными пользователей. Не должен быть {@code null}.
-     */
-    public UserService(UserDao userDao) {
-        this.userDao = userDao;
+    public UserService(UserRepository repository) {
+        this.repository = repository;
     }
 
-    /**
-     * Создает нового пользователя с указанными данными и сохраняет его.
-     *
-     * @param name  Имя пользователя.
-     * @param email Email пользователя.
-     * @param age   Возраст пользователя.
-     * @return Созданный пользователь.
-     */
-    public User createUser(String name, String email, int age) {
+    public List<UserDto> findAll() {
+        return repository.findAll().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public UserDto findById(Long id) {
+        return repository.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public UserDto create(UserDto dto) {
         User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setAge(age);
-        userDao.create(user);
-        return user;
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setAge(dto.getAge());
+        return toDto(repository.save(user));
     }
 
-    /**
-     * Возвращает пользователя по его идентификатору.
-     *
-     * @param id Идентификатор пользователя. Не должен быть {@code null}.
-     * @return Найденный пользователь или {@code null}, если пользователь не существует.
-     */
-    public User getUser(Long id) {
-        return userDao.read(id);
+    public UserDto update(Long id, UserDto dto) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setAge(dto.getAge());
+        return toDto(repository.save(user));
     }
 
-    /**
-     * Возвращает список всех пользователей.
-     *
-     * @return Список пользователей. Если пользователей нет, возвращает пустой список.
-     */
-    public List<User> getAllUsers() {
-        return userDao.findAll();
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 
-    /**
-     * Обновляет данные пользователя.
-     *
-     * @param user Пользователь с обновленными данными. Не должен быть {@code null}.
-     */
-    public void updateUser(User user) {
-        userDao.update(user);
-    }
-
-    /**
-     * Удаляет пользователя по его идентификатору.
-     *
-     * @param id Идентификатор пользователя. Не должен быть {@code null}.
-     */
-    public void deleteUser(Long id) {
-        userDao.delete(id);
+    private UserDto toDto(User user) {
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setAge(user.getAge());
+        return dto;
     }
 }
