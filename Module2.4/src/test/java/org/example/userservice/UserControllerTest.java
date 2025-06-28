@@ -17,8 +17,12 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(UserController.class)
 class UserControllerTest {
@@ -34,12 +38,7 @@ class UserControllerTest {
 
     @Test
     void testGetAllUsers() throws Exception {
-        UserDto user = new UserDto();
-        user.setId(1L);
-        user.setName("Alice");
-        user.setEmail("alice@example.com");
-        user.setAge(30);
-
+        UserDto user = new UserDto(1L, "Alice", "alice@example.com", 30);
         when(service.findAll()).thenReturn(List.of(user));
 
         mockMvc.perform(get("/api/users"))
@@ -50,16 +49,8 @@ class UserControllerTest {
 
     @Test
     void testCreateUser() throws Exception {
-        UserDto input = new UserDto();
-        input.setName("Bob");
-        input.setEmail("bob@example.com");
-        input.setAge(25);
-
-        UserDto saved = new UserDto();
-        saved.setId(2L);
-        saved.setName("Bob");
-        saved.setEmail("bob@example.com");
-        saved.setAge(25);
+        UserDto input = new UserDto(null, "Bob", "bob@example.com", 25);
+        UserDto saved = new UserDto(2L, "Bob", "bob@example.com", 25);
 
         when(service.create(Mockito.any())).thenReturn(saved);
 
@@ -73,11 +64,7 @@ class UserControllerTest {
 
     @Test
     void testGetUserById() throws Exception {
-        UserDto user = new UserDto();
-        user.setId(1L);
-        user.setName("Alice");
-        user.setEmail("alice@example.com");
-        user.setAge(30);
+        UserDto user = new UserDto(1L, "Alice", "alice@example.com", 30);
 
         when(service.findById(1L)).thenReturn(user);
 
@@ -91,16 +78,8 @@ class UserControllerTest {
 
     @Test
     void testUpdateUser() throws Exception {
-        UserDto input = new UserDto();
-        input.setName("Updated");
-        input.setEmail("updated@example.com");
-        input.setAge(35);
-
-        UserDto updated = new UserDto();
-        updated.setId(1L);
-        updated.setName("Updated");
-        updated.setEmail("updated@example.com");
-        updated.setAge(35);
+        UserDto input = new UserDto(null, "Updated", "updated@example.com", 35);
+        UserDto updated = new UserDto(1L, "Updated", "updated@example.com", 35);
 
         when(service.update(Mockito.eq(1L), Mockito.any())).thenReturn(updated);
 
@@ -121,5 +100,4 @@ class UserControllerTest {
 
         Mockito.verify(service).delete(1L);
     }
-
 }

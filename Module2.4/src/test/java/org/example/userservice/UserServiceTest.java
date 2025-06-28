@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 class UserServiceTest {
 
@@ -33,10 +32,7 @@ class UserServiceTest {
 
     @Test
     void testCreateUser() {
-        UserDto inputDto = new UserDto();
-        inputDto.setName("Alice");
-        inputDto.setEmail("alice@example.com");
-        inputDto.setAge(30);
+        UserDto inputDto = new UserDto(null, "Alice", "alice@example.com", 30);
 
         User savedUser = new User();
         savedUser.setId(1L);
@@ -56,10 +52,10 @@ class UserServiceTest {
         assertEquals("alice@example.com", capturedUser.getEmail());
         assertEquals(30, capturedUser.getAge());
 
-        assertEquals("Alice", result.getName());
-        assertEquals("alice@example.com", result.getEmail());
-        assertEquals(30, result.getAge());
-        assertEquals(1L, result.getId());
+        assertEquals("Alice", result.name());
+        assertEquals("alice@example.com", result.email());
+        assertEquals(30, result.age());
+        assertEquals(1L, result.id());
     }
 
     @Test
@@ -75,9 +71,9 @@ class UserServiceTest {
         UserDto result = userService.findById(1L);
 
         assertNotNull(result);
-        assertEquals("Bob", result.getName());
-        assertEquals("bob@example.com", result.getEmail());
-        assertEquals(25, result.getAge());
+        assertEquals("Bob", result.name());
+        assertEquals("bob@example.com", result.email());
+        assertEquals(25, result.age());
     }
 
     @Test
@@ -94,13 +90,13 @@ class UserServiceTest {
         user2.setEmail("bob@example.com");
         user2.setAge(25);
 
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
+        when(userRepository.findAll()).thenReturn(List.of(user1, user2));
 
         List<UserDto> users = userService.findAll();
 
         assertEquals(2, users.size());
-        assertEquals("Alice", users.get(0).getName());
-        assertEquals("Bob", users.get(1).getName());
+        assertEquals("Alice", users.get(0).name());
+        assertEquals("Bob", users.get(1).name());
     }
 
     @Test
@@ -111,19 +107,16 @@ class UserServiceTest {
         existingUser.setEmail("old@example.com");
         existingUser.setAge(20);
 
-        UserDto updateDto = new UserDto();
-        updateDto.setName("New Name");
-        updateDto.setEmail("new@example.com");
-        updateDto.setAge(30);
+        UserDto updateDto = new UserDto(null, "New Name", "new@example.com", 30);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         UserDto updated = userService.update(1L, updateDto);
 
-        assertEquals("New Name", updated.getName());
-        assertEquals("new@example.com", updated.getEmail());
-        assertEquals(30, updated.getAge());
+        assertEquals("New Name", updated.name());
+        assertEquals("new@example.com", updated.email());
+        assertEquals(30, updated.age());
     }
 
     @Test

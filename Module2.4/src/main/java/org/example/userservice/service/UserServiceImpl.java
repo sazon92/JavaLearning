@@ -34,9 +34,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(UserDto dto) {
         User user = new User();
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setAge(dto.getAge());
+        user.setName(dto.name());
+        user.setEmail(dto.email());
+        user.setAge(dto.age());
         return toDto(repository.save(user));
     }
 
@@ -44,9 +44,9 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long id, UserDto dto) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setAge(dto.getAge());
+        user.setName(dto.name());
+        user.setEmail(dto.email());
+        user.setAge(dto.age());
         return toDto(repository.save(user));
     }
 
@@ -56,11 +56,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserDto toDto(User user) {
-        UserDto dto = new UserDto();
-        dto.setId(user.getId());
-        dto.setName(user.getName());
-        dto.setEmail(user.getEmail());
-        dto.setAge(user.getAge());
-        return dto;
+        return new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getAge()
+        );
     }
 }
