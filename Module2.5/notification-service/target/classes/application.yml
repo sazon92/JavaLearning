@@ -1,0 +1,37 @@
+server:
+  port: 8081
+
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+      group-id: notification-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "org.example.shared"
+        spring.json.value.default.type: org.example.shared.KafkaEvent
+
+    listener:
+      ack-mode: record
+      ack-on-error: true
+      missing-topics-fatal: false
+      type: single
+      poll-timeout: 3000
+
+    admin:
+      properties:
+        default.replication.factor: 1
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
