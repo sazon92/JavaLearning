@@ -24,6 +24,7 @@
         <testcontainers.version>1.19.3</testcontainers.version>
         <dotenv.version>2.3.2</dotenv.version>
         <kafkaevent.version>1.0</kafkaevent.version>
+        <swagger.version>2.2.0</swagger.version>
     </properties>
 
     <dependencies>
@@ -47,6 +48,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
         </dependency>
 
         <!-- PostgreSQL Driver -->
@@ -125,6 +131,12 @@
             <groupId>org.example</groupId>
             <artifactId>shared-dto</artifactId>
             <version>${kafkaevent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
 
     </dependencies>
