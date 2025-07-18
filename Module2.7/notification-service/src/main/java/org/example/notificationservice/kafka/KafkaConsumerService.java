@@ -1,5 +1,6 @@
 package org.example.notificationservice.kafka;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.example.notificationservice.service.EmailService;
 import org.example.shared.KafkaEvent;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -17,6 +18,7 @@ public class KafkaConsumerService {
     }
 
     @KafkaHandler
+    @CircuitBreaker(name = "emailServiceCB", fallbackMethod = "fallbackKafkaEmail")
     public void handleEvent(KafkaEvent event) {
         String message = switch (event.operation()) {
             case "CREATE" -> "Здравствуйте! Ваш аккаунт на сайте был успешно создан.";
@@ -26,5 +28,9 @@ public class KafkaConsumerService {
         if (message != null) {
             emailService.sendEmail(event.email(), "Уведомление", message);
         }
+    }
+
+    public void fallbackKafkaEmail(KafkaEvent event, Throwable ex) {
+        System.err.println("Fallback Kafka email: " + ex.getMessage());
     }
 }
