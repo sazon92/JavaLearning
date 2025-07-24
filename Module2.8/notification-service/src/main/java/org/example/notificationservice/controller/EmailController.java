@@ -1,5 +1,6 @@
 package org.example.notificationservice.controller;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.example.notificationservice.dto.EmailDto;
 import org.example.notificationservice.service.EmailService;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,14 @@ public class EmailController {
     }
 
     @PostMapping
+    @CircuitBreaker(name = "emailServiceCB", fallbackMethod = "fallbackSendEmail")
     public ResponseEntity<Void> sendEmail(@RequestBody EmailDto dto) {
         emailService.sendEmail(dto.to(), dto.subject(), dto.body());
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<Void> fallbackSendEmail(EmailDto dto, Throwable ex) {
+        System.err.println("Fallback при отправке email: " + ex.getMessage());
+        return ResponseEntity.status(503).build();
     }
 }
